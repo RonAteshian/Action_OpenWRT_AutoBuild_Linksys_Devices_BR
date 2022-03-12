@@ -28,6 +28,7 @@ env:
   KERNEL_VERSION: kernel_version.sh
   GITHUB_RUN: github_push.sh
   EXT_INIT_ENV: environment.sh
+  LUCI_SOURCE: 0
   USE_FILES: true
   USE_CUSTC: true
   USE_CUST_THEMES: true
@@ -215,25 +216,20 @@ jobs:
           git log --pretty=oneline -n 1
 
 ### ------------------------------------------------------------------------------ ###
-      - name: Set LUCI Source
-        id: setLuci
+      - name: Set LUCI Source 0
+        if: env.LUCI_SOURCE == '0' && !cancelled()
         run: |
-          if [[ "${{ github.event.inputs.lucisource }}" == "0" ]]; then
               cd openwrt
               sed -i 's#/git.openwrt.org/project/luci.git#/git.openwrt.org/project/luci.git#g' feeds.conf.default
               sed -i 's#/github.com/coolsnowwolf/luci#/git.openwrt.org/project/luci.git#g' feeds.conf.default
-          fi
-          if [[ "${{ github.event.inputs.lucisource }}" == "1" ]]; then
-              echo "NOT IMPLANTED"
-          fi
-          if [[ "${{ github.event.inputs.lucisource }}" == "2" ]]; then
-              echo "NOT IMPLANTED"
-          fi
-          if [[ "${{ github.event.inputs.lucisource }}" == "3" ]]; then
+
+      - name: Set LUCI Source 1
+        if: env.LUCI_SOURCE == '1' && !cancelled()
+        run: |
               cd openwrt
               sed -i 's#/github.com/coolsnowwolf/luci#/github.com/coolsnowwolf/luci#g' feeds.conf.default
               sed -i 's#/git.openwrt.org/project/luci.git#/github.com/coolsnowwolf/luci#g' feeds.conf.default
-          fi
+
 ### ------------------------------------------------------------------------------ ###
       - name: Load LUCI custom Themes
         if: env.USE_CUST_THEMES == 'true' && !cancelled()
