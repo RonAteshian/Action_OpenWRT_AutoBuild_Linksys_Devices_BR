@@ -29,6 +29,8 @@ env:
   GITHUB_RUN: github_push.sh
   EXT_INIT_ENV: environment.sh
   LUCI_SOURCE: 0
+  OPENWRT_SOURCE: https://github.com/openwrt/openwrt.git
+  OPENWRT_BRANCH: master
   USE_FILES: true
   USE_CUSTC: true
   USE_CUST_THEMES: true
@@ -173,33 +175,12 @@ jobs:
                   echo "SSH_AFTERBUILD=true" >> $GITHUB_ENV
           fi
 ### ------------------------------------------------------------------------------ ###
-      - name: Set source and branch
-        id: setSource
-        run: |
-          if [[ "${{ github.event.inputs.source }}" == "0" ]]; then
-                  echo "::set-output name=sourceString::https://github.com/openwrt/openwrt.git"
-                  echo "::set-output name=branchString::master"
-          fi
-          if [[ "${{ github.event.inputs.source }}" == "1" ]]; then
-                  echo "::set-output name=sourceString::https://github.com/openwrt/openwrt.git"
-                  echo "::set-output name=branchString::openwrt-19.07"
-          fi
-          if [[ "${{ github.event.inputs.source }}" == "2" ]]; then
-                  echo "::set-output name=sourceString::https://github.com/openwrt/openwrt.git"
-                  echo "::set-output name=branchString::openwrt-21.02"
-          fi
-          if [[ "${{ github.event.inputs.source }}" == "3" ]]; then
-                  echo "::set-output name=sourceString::https://github.com/coolsnowwolf/lede.git"
-                  echo "::set-output name=branchString::master"
-          fi
-### ------------------------------------------------------------------------------ ###
       - name: Clone source code
         working-directory: /workdir
         run: >
           df -hT $PWD
 
-          git clone ${{ steps.setSource.outputs.sourceString }} -b ${{
-          steps.setSource.outputs.branchString }} openwrt
+          git clone $OPENWRT_SOURCE -b $OPENWRT_BRANCH
 
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 ### ------------------------------------------------------------------------------ ###
