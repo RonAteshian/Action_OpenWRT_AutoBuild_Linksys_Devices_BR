@@ -14,27 +14,10 @@ name: Test Build (Short) (Linksys Devices)
 'on':
   repository_dispatch: null
   workflow_dispatch:
-    inputs:
-      hardware:
-        description: >
-          '[0] ALL [1] WRT3200ACM [2] WRT32X [3] WRT1200AC [4] WRT1900ACS V1 V2 [5]
-          WRT1900AC V1 [6] WRT1900AC V2'
-        required: true
-        default: '1'
-      source:
-        description: '[0] Snapshot [1] openwrt-19.07 [2] openwrt-21.02 [3] lede'
-        required: true
-        default: '0'
-      lucisource:
-        description: |
-          'LUCI Feeds Location:'
-          '[0] Snapshot [1] openwrt-19.07 [2] openwrt-21.02 [3] lede'
-        required: true
-        default: '0'
-      sshd:
-        description: '[0] NONE [1] TMATE SSH, [2] NGROK SSH [3] SSH After Build'
-        required: true
-        default: '0'
+  schedule:
+          # * is a special character in YAML so you have to quote this string
+          # * “At 12:00.”
+    - cron:  '00 12 * * *'
 env:
   HARDWARE_ID: wrt3200acm
   HARDWARE_DEVICE: wrt3200acm
